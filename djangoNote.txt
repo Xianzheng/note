@@ -1,3 +1,21 @@
+创建文件夹
+
+在文件夹下创建虚拟环境
+
+进入虚拟环境./venv/Scripts/activate
+
+下载django pip install django
+
+创建项目 django-admin startproject backendProject
+
+到backendProject下创建App python manage.py startapp userApp
+
+导入已有migrations python manage.py migrate
+
+在backendProject settings.py的 INSTALLED_APPS中加上userApp
+
+TEMPLATES 的 DIRS加上 os.path.join(BASE_DIR,'templates')
+
 一定要在templates文件夹里再加一个文件夹放html要不然django找不到
 
 path('',index)就是首页面
