@@ -1,0 +1,121 @@
+documentation地址
+https://www.django-rest-framework.org/
+
+安装django-rest-framework 到django虚拟环境上
+documentation上有详细的installation
+
+在restful的 app的views.py上写上
+from django.shortcuts import render
+from django.http import HttpResponse
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(['GET'])
+def apiOverview(request):
+    api_urls = {
+        'List':'/task-list/',
+        'Create View':'/task-detail/<str:pk>/',
+        'Create':'/task-create/',
+        'Update':'/task-update/<str:pk>/',
+        'Delete':'/task-delete/<str:pk>/'
+    }
+    return Response(api_urls)
+-------------------------------------------------
+在api app中创建一个serialize.py 文件
+from rest_framework import serializers
+from .models import Task
+
+class TaskSerializer(serializers.ModelSerializer)
+    class Meta:
+        model = Task
+        fields = '__all__'
+
+--------------------------------------------------
+导入serializers class进 view
+from .serializer import TaskSerializer
+from .models import Task
+
+@api_view(['GET'])
+def taskList(request):
+    tasks = Task.objects.all()
+    print('TASKS',tasks)
+    serializer = TaskSerializer(tasks,many=True)
+    print('AAA',serializer)
+    return Response(serializer.data)
+--------------------------------------------
+导入path 信息进入 urls.py
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    # path('first/',firstView),
+    # path('',firstView),
+    path('',views.apiOverview,name='api-overview'),
+    path('task-list/',views.taskList,name='task-list'),
+]
+
+---------------------------------------------
+用id查询，views.py里写入
+
+@api_view(['GET'])
+def taskDetail(request,pk):
+    tasks = Task.objects.get(id = pk)
+    print('TASKS',tasks)
+    serializer = TaskSerializer(tasks,many=False)
+    print('AAA',serializer)
+    return Response(serializer.data)
+
+url.py里添加
+path('task-detail/<str:pk>/',views.taskDetail,name='task-detail'),
+
+-----------------------------------------
+添加数据只能用json添加,不加id也可以id自动添加
+{
+        "id": 1,
+        "title": "good",
+        "completed": false
+}
+views.py加入
+
+@api_view(['POST'])
+def taskCreate(request):
+    serializer = TaskSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        
+    return Response(serializer.data)
+
+urls.py加入path
+path('task-create/',views.taskCreate,name='task-create'),
+--------------------------------------------
+修改数据
+views.py加入
+
+@api_view(['POST'])
+def taskUpdate(request,pk):
+    task = Task.objects.get(id=pk)
+    serializer = TaskSerializer(instance=task,data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        
+    return Response(serializer.data)
+
+path加入path('task-update/<str:pk>/',views.taskUpdate,name='task-update')
+---------------------------------------------
+删除数据
+views.py加入
+@api_view(['DELETE'])
+def taskDelete(request,pk):
+    task = Task.objects.get(id=pk)
+    task.delete()
+        
+    return Response("Item successful deleted")
+
+url加入path('task-delete/<str:pk>/',views.taskDelete,name='task-delete'),
+
+上线需要
+pip freeze > requirements.txt
