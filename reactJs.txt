@@ -1,0 +1,91 @@
+App.js写入
+
+import Header from "./components/Header";
+import { useState } from "react";
+import NewForm from "./components/Form";
+import React from "react";
+import { v1 as uuid } from "uuid";
+import YoutubeEmbed from "./components/YoutubeEmbed";
+
+export default function App() {
+  const [songs, setSongs] = useState([
+    { title: "almost home", id: 1 },
+    { title: "almost there", id: 2 },
+    { title: "almost that", id: 3 },
+  ]);
+
+  const addSong = (title) => {
+    setSongs([...songs, { title, id: uuid() }]);
+  };
+
+  return (
+    <div className="App">
+      <h1>Youtube Embed</h1>
+      <YoutubeEmbed embedId="NdwFmtLgDVU" />
+      {songs.map((song) => {
+        return <li key={song.id}>{song.title}</li>;
+      })}
+      <NewForm addSong={addSong} />
+    </div>
+  );
+}
+------------------------------------------------------------------
+Form.js里写入
+import { useState } from "react";
+const NewForm = ({ addSong }) => {
+  const [url, setURL] = useState("");
+
+  const handle = (e) => {
+    e.preventDefault();
+    addSong(url);
+  };
+  return (
+    <form onSubmit={handle}>
+      <label>add youtube url</label>
+      <input
+        type="text"
+        value={url}
+        required
+        onChange={(e) => {
+          setURL(e.target.value);
+        }}
+      ></input>
+      <input type="submit" value="add URL" />
+    </form>
+  );
+};
+
+export default NewForm;
+--------------------------------------------------------------
+YoutubeEmbed.js写入
+import React from "react";
+import PropTypes from "prop-types";
+
+const YoutubeEmbed = ({ embedId }) => (
+  <div className="video-responsive">
+    <iframe
+      width="853"
+      height="480"
+      src={`https://www.youtube.com/embed/${embedId}`}
+      frameBorder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      title="Embedded youtube"
+    />
+  </div>
+);
+
+YoutubeEmbed.propTypes = {
+  embedId: PropTypes.string.isRequired,
+};
+
+export default YoutubeEmbed;
+
+-------------------------------------------------------------------------------
+注意在App.js里调用<NewSongForm addSong = {addSong}> 这里的 {addSong}其实是在App.js里写好的
+一个函数，将整个函数当参数传给了 componenets NewSongForm，这样就实现了两个useState互联，妙
+
+在input中应该写入
+<input type="text" value={url} required onChange={(e) => { setURL(e.target.value) }}/>
+不然可能会导致useState没有进行重新渲染
+      

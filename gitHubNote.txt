@@ -18,3 +18,6 @@ zht19980827
 
 token： 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
 $ git config user.name
+
+下载指定branch代码
+git clone -b master https://github.com/Xianzheng/testPlayVideo.git
