@@ -88,4 +88,51 @@ export default YoutubeEmbed;
 在input中应该写入
 <input type="text" value={url} required onChange={(e) => { setURL(e.target.value) }}/>
 不然可能会导致useState没有进行重新渲染
+
+react 运行 -> npm start
+
+npm install axios  -> axios发送后端请求请求
+
+----------------------------------------------------------------------------------
+axios请求后盾数据
+
+useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/task-list/")
+      .then((res) => {
+        setSongs(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+这里注意，如果没有[]当第二个参数useEffect将会无限循环
+------------------------------------------------------------------------------------
+这里用用axios向后端发送数据，并用后端返回的返回的数据更新现有useState
+
+const handle = (e) => {
+    e.preventDefault();
+    const address = "http://127.0.0.1:8000/api/task-create/";
+    const data = { title: url, completed: false };
+    axios
+      .post(address, data)
+      .then((res) => {
+        addSong(res.data);
+      })
+      .catch((err) => err);
+  };
+
       
+在这里更新useState需要用发送返回来的Object来更新Object
+所以 添加函数长这样子
+
+const addSong = (data) => {
+    console.log(data);
+    setSongs([
+      ...songs,
+      { id: data.id, title: data.title, completed: data.completed },
+    ]);
+  };
+
+------------------------------------------------------------------------------------------
