@@ -134,5 +134,49 @@ const addSong = (data) => {
       { id: data.id, title: data.title, completed: data.completed },
     ]);
   };
+-----------------------------------------------------------------------------
+
+在对useState用map渲染多个标签要用div不然会报错
+react 在标签中直接写css 携程这样 <li style = {{display: "inline-block"}}>
+在函数中直接传递参数不用大括号
+完整 代码
+
+return (
+    <div className="App">
+      <h1>Youtube Embed</h1>
+      <YoutubeEmbed embedId="NdwFmtLgDVU" />
+      <div>
+        {songs.map((song) => {
+          return (
+          <div key={song.id} >
+          <li style = {{display: "inline-block"}}>{song.title} </li>
+          <button onClick={()=>Delete(song.id)}>Delete</button>
+          </div>
+          );
+        })}
+      </div>
+      <NewForm addSong={addSong} />
+    </div>
+  );
+
+对数据做删除操作，切记address一定要写对不然会有multi redirect错误
+在数据库中删除数据同时也要对useState做更新操作这样页面才会重新渲染
+更新操作长这样setSongs(songs.filter(res => res.id !== id))
+
+完整代码：
+  const Delete = (id) =>{
+    const address = "http://127.0.0.1:8000/api/task-delete/"+id+"/"
+    axios
+      .delete(address)
+      .then((res)=>{
+        setSongs(songs.filter(res => res.id !== id));
+      })
+      .catch((err)=>{
+        console.log(err)
+      });
+  }
+
+
+
 
 ------------------------------------------------------------------------------------------
