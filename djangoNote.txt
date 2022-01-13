@@ -100,6 +100,85 @@ if request.method == 'POST':
             form.save()
             return render(request, 'hello.html', {'form': form})
 
+------------------------------------------------------------------------------------
+
+用form 根据model里class submit 数据，
+
+例如models里有内容
+
+from django.db import models
+
+# Create your models here.
+class Article(models.Model):
+    title = models.CharField(max_length=100)
+    slug = models.SlugField()
+    body = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+
+
+在app中创建forms.py，在form里写入
+
+from dataclasses import fields
+from django.forms import ModelForm
+from .models import Article
+
+class ArticleForm(ModelForm):
+    class Meta:
+        model = Article
+        fields = '__all__'
+
+
+用在view.py里面使用此form
+
+from .forms import ArticleForm
+
+def create_form(request):
+    if request.method == 'POST':
+        form = ArticleForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request,'loginSuccess.html')
+    else:
+        form = ArticleForm()
+    return render(request,'createForm.html',{'form':form})
+
+---------------------------------------------------------------------------
+
+用django 的userCreationForm 和 AuthenticateForm,创建用户和验证用户
+
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login
+
+def sign_up(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request,'mainPage.html')
+    else:
+        form = UserCreationForm()
+    return render(request,'signUp.html',{'form':form})
+
+
+def log_in(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            # log in the user
+            user = form.get_user()
+            content = Article.objects.all()
+            login(request,user)
+            return render(request,'loginSuccess.html',{'content':content})
+    else:
+        form = AuthenticationForm()
+    return render(request,'logIn.html',{'form':form})
+
+
+
+
+
+
+
 
 
 
