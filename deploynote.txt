@@ -5,6 +5,7 @@ pip install pyzmq==19.0.2
 #use pem file: 
 WinSCP:   登录->高级->SSH->验证会自动把pem文件转换为ppk
 Putty: SSH ->Auth-> Browse 选择ppk文件
+（先用winscp转ppk文件，再用putty用户名用root登录）
 
 #EC2 Python 环境setUp：
 sudo apt-get-update
