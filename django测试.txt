@@ -1,0 +1,9 @@
+django Test 的测试方法必须以test_开头
+
+class SimpleTest(TestCase):
+    def setUp(self):
+        注意要点.objects.create(注意 = "aaaaa", 所属编号 = 4)
+    def test_1(self):
+        self.assertEqual(1 + 1, 2)
+        notice = 注意要点.objects.get(所属编号 = 4)
+        self.assertEqual(notice.注意,'我只是一个测试')

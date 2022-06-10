@@ -1,0 +1,18 @@
+map()是Series对象的一个函数，DataFrame中没有map()，map()的功能是将一个自定义函数作用于Series对象的每个元素。
+
+	s0 = newdf[0].map(lambda x: '/'+x+'/')
+
+apply()函数的功能是将一个自定义函数作用于DataFrame的行或者列
+
+	newdf[3]= newdf[[0,1]].apply(lambda x: '-'.join(x), axis=1)
+
+
+applymap()函数的功能是将自定义函数作用于DataFrame的所有元素
+
+
+
+
+
+
+
+

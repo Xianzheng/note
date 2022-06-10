@@ -1,0 +1,45 @@
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+''不是空，
+np.nan才是空
+df.loc,和df['column']返回的是 series，df.illoc[:,:]返回的才是dataframe
+
+series和dataframe都能fillna
+
+dataframe可以看作多个series组成
+
+newdf = pd.DataFrame(list(zip(s1,s2)))
+
+series可以相加
+
+或者
+
+pd.concat([s1, s2], axis = 0, ignore_index = True)
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+import pandas as pd
+import numpy as np
+
+lst1 = ['小白菜',np.nan,'南瓜','番茄']
+lst2 = ['桃子','苹果',np.nan,'香蕉']
+lst3 = [np.nan,'牛肉','羊肉','猪肉']
+
+df = pd.DataFrame(data = [lst1,lst2,lst3],columns=list('ABCD'),index = ['水果','蔬菜','禽类'])
+
+s1 = df['A'].fillna('榴莲')
+
+s2 = df['B'].fillna('樱桃')
+
+newdf = pd.DataFrame(list(zip(s1,s2)))
+
+print(newdf)
+
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+series 和 df都支持查询
+
+df = pd.DataFrame(dic)
+
+series1 = df['A']
+
+print(series1[series1 > 1])
