@@ -28,3 +28,7 @@ drinks.loc[:,'beer_servings':'wine_servings'].apply(np.argmax,axis=1)
 drinks.loc[:,'beer_servings','wine_servings'].applymap(float)
 
 movies.sort_values('duration',ascending='false')
+----------------------------------------------
+df['coloumns_name']这个为series
+df.iloc[1:2,1:2]即使这个一行一列都为data frame
+----------------------------------------------
