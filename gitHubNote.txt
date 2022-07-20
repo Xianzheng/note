@@ -21,3 +21,16 @@ $ git config user.name
 
 下载指定branch代码
 git clone -b master https://github.com/Xianzheng/testPlayVideo.git
+
+如果git创建好一次
+下次只需要
+git add .
+git commit -m 'message'
+git push
+
+如果需要新的branch
+git brance -M name //注意这里的name 不是 'name'
+
+切换提交比如branch是main 
+git push -u origin main
+
