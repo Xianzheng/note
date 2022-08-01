@@ -7,3 +7,4 @@ pip download -d your_offline_packages <package_name>
 pip download -d your_offline_packages -r requirements.txt
 批量安装离线包
 pip install --no-index --find-links=./your_offline_packages -r requirements.txt  
+python -m ensurepip
