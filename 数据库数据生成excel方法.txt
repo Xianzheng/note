@@ -1,0 +1,47 @@
+import pandas as pd
+from pandas import DataFrame
+def getXls_view(request):
+    lst1 = []
+    lst2 = []
+    lst3 = []
+    lst4 = []
+    lst5 = []
+    lst6 = []
+    lst7 = []
+    lst8 = []
+    lst9 = []
+    lst10 = []
+    
+    allTable = PurchaseTable.objects.all()
+    for eachTable in allTable:
+        table = PurchaseModel.objects.filter(belong = eachTable)
+        for item in table:
+            lst1.append(item.meterialName)
+            lst2.append(item.specifications)
+            lst3.append(item.brand)
+            lst4.append(item.unit)
+            lst5.append(item.quantity)
+            lst6.append(item.budgetPrice)
+            lst7.append(item.use)
+
+            
+            lst8.append(item.remark)
+            lst9.append(eachTable.subscriptionUnit)
+            lst10.append(eachTable.subscriptionTime.date())
+    
+    data = {'申购单位':lst9, '申购时间':lst10, '物资名称':lst1,'型号规格':lst2,'品牌或生产厂家':lst3,
+            '单位':lst4,'数量':lst5,'预算价格':lst6,'用途':lst7,'备注':lst8}
+
+    df = pd.DataFrame(data)
+
+    DataFrame(df).to_excel('static.xls', sheet_name='Sheet1', index=False, header=True)
+
+
+
+    file = open('static.xls', 'rb')
+    response = FileResponse(file)
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="excel.xls"'
+    #<!-- {% if action == 'sign1' or action == 'sign3'%} -->
+    #<!-- {% endif %} -->
+    return response

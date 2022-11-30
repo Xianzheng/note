@@ -1,0 +1,10 @@
+pip install wheel-0.37.1-py2.py3-none-any.whl
+安装不带依赖
+pip install PyAutoGUI-0.9.42.tar.gz --no-deps
+下载离线包
+pip download -d your_offline_packages <package_name>
+批量下载离线包
+pip download -d your_offline_packages -r requirements.txt
+批量安装离线包
+pip install --no-index --find-links=./your_offline_packages -r requirements.txt  
+python -m ensurepip
