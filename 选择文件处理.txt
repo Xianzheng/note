@@ -1,0 +1,45 @@
+{% extends 'temp.html' %}
+{% block content %}
+<div class = 'box1'>
+    <form method="post" action="/ChooseCardToPrint/">
+        <select name="sel_value">
+            {% for i in xlsFile %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="转换"/>
+        {% csrf_token %}
+    </form>
+</div>
+{% endblock %}
+
+def dealFile_view(request):
+    if request.method == 'POST':
+        get_value = request.POST.get('sel_value', "")
+        # print(get_value)
+        filePath = os.path.join(BASE_DIR, 'media', get_value)
+        df = pd.read_excel(filePath,sheet_name=1)
+
+        df = df.iloc[:,:5]
+
+        df1 = df.iloc[:,0:3]#df表的0,1,2项
+
+
+        df2 = df.iloc[:,3:]#df表的3,4项
+
+        df1 = df1.fillna(method='pad',axis=0)#将df1中的 空白项按上一项填
+        df3 = pd.concat([df1,df2],axis=1)# 合并两个df
+
+        df3 = df3.drop_duplicates()
+        filePath = os.path.join(BASE_DIR, 'media',  get_value.split('.')[0]+'.csv')
+        df3.to_csv(filePath)
+        message = '                         数据已转成csv格式,可在上传数据中传入数据库'
+        return render(request,'message.html',{'message':message})
+    else:
+    
+        path = os.path.join(BASE_DIR, 'media')
+        files= os.listdir(path) 
+        
+        xlsFile = [i for i in files if i.split('.')[-1] == 'xls']
+
+    return render(request, 'dealFile.html',{'xlsFile':xlsFile})

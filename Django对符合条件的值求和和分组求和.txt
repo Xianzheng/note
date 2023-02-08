@@ -1,0 +1,27 @@
+class VisitNumber(models.Model):
+    count=models.IntegerField(verbose_name='网站访问总次数',default=0) #网站访问总次数
+    class Meta:
+        verbose_name = '网站访问总次数'
+        verbose_name_plural = verbose_name
+    def __str__(self):
+        return str(self.count)
+
+对某一列中的值进行求和
+
+from django.db.models import Sum  # 引入
+
+visitNumber = VisitNumber.objects.aggregate(nums=Sum('count'))
+print(visitNumber['nums'])
+
+对符合条件的数据进行求和
+
+
+total=ImportData.objects.filter('列名'='值').aggregate(nums=Sum('count'))
+print total['nums']
+
+根据条件进行分组求和
+reg=ImportDta.object.values('列名').annotate(number=Sum("count"))
+ #[{'product': u'E', 'number': 3637}, {'product': u'S', 'number': 19409}, {'product': u'C', 'number': 4829}, {'product': u'N', 'number': 846}]
+
+
+

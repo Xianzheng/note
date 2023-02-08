@@ -1,0 +1,184 @@
+创建文件夹
+
+在文件夹下创建虚拟环境
+
+进入虚拟环境./venv/Scripts/activate
+
+下载django pip install django
+
+创建项目 django-admin startproject backendProject
+
+到backendProject下创建App python manage.py startapp userApp
+
+导入已有migrations python manage.py migrate
+
+在backendProject settings.py的 INSTALLED_APPS中加上userApp
+
+TEMPLATES 的 DIRS加上 os.path.join(BASE_DIR,'templates')
+
+一定要在templates文件夹里再加一个文件夹放html要不然django找不到
+
+path('',index)就是首页面
+
+静态文件最好不要放在app中，deploy会出错，处理静态文件的方法
+在setting中修改
+
+mystatic 文件夹是自己创建的
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    'mystatic',
+]
+
+在html最上层添加{% load static %}
+引用文件时 <link rel="stylesheet" type="text/css" href="{% static 'css/style.css'%}" 
+
+改变template不显示记得在setting里增加'DIRS': [os.path.join(BASE_DIR, 'templates/')],
+
+动态添加表单记得在表单上添加动态按钮，在同一个function中添加
+$("#REGISTERFORM").on("click","#CLOSEBUTTON",function(){
+        $("#REGISTERFORM").empty()
+      });
+
+ajax四要素：url，data（不发data还post个屁），type，datatype ！！！！
+
+user = user.filter()
+if want to access user name must be user[0].username
+
+many-to-many need to save first then add class
+
+传递两个参数 <h2><a href="/appointment_detail/{{appointment.id}}/{{'no'}}">{{appointment.activity}}</h2>
+
+在django中 form 可以写validation
+
+class Show(forms.ModelForm):
+    title = forms.CharField(label='TITLE',
+                            widget=forms.TextInput(attrs={"placeholder": "your title"}))
+
+    class Meta:
+        model = models.ShowModel
+        fields = ['title']
+
+    def clean_title(self, *args, **kwargs):
+        title = self.cleaned_data.get('title')
+        print('it works')
+        if 'a' in title:
+            raise forms.ValidationError('This is not')
+        return title
+
+更新导入前人输入的数据
+obj = Model.object.get(id=1)
+form = Form(request.POST,initial= initial_data,instance = obj)
+return render(request, 'hello.html', {'form': form})
+
+加入静态文件，
+在主要文件夹的urls里加
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+urlpatterns += staticfiles_urlpatterns()
+setting中加入
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'assets'),
+)
+从此就可以在templates中
+{% load static %}
+ <link rel="stylesheet" href="{%static 'styles.css'%}" />
+
+DJANGO上传图片
+在setting中添加
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+在urls中添加
+from django.conf.urls.static import static
+from django.conf import settings
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+models中加
+thumb = models.ImageField(default='default.png', blank=True)
+views中得写
+if request.method == 'POST':
+        form = Show(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return render(request, 'hello.html', {'form': form})
+
+------------------------------------------------------------------------------------
+
+用form 根据model里class submit 数据，
+
+例如models里有内容
+
+from django.db import models
+
+# Create your models here.
+class Article(models.Model):
+    title = models.CharField(max_length=100)
+    slug = models.SlugField()
+    body = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+
+
+在app中创建forms.py，在form里写入
+
+from dataclasses import fields
+from django.forms import ModelForm
+from .models import Article
+
+class ArticleForm(ModelForm):
+    class Meta:
+        model = Article
+        fields = '__all__'
+
+
+用在view.py里面使用此form
+
+from .forms import ArticleForm
+
+def create_form(request):
+    if request.method == 'POST':
+        form = ArticleForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request,'loginSuccess.html')
+    else:
+        form = ArticleForm()
+    return render(request,'createForm.html',{'form':form})
+
+---------------------------------------------------------------------------
+
+用django 的userCreationForm 和 AuthenticateForm,创建用户和验证用户
+
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login
+
+def sign_up(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request,'mainPage.html')
+    else:
+        form = UserCreationForm()
+    return render(request,'signUp.html',{'form':form})
+
+
+def log_in(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            # log in the user
+            user = form.get_user()
+            content = Article.objects.all()
+            login(request,user)
+            return render(request,'loginSuccess.html',{'content':content})
+    else:
+        form = AuthenticationForm()
+    return render(request,'logIn.html',{'form':form})
+
+
+
+
+
+
+
+
+
+

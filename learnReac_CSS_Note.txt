@@ -1,2 +1,0 @@
-创建react 项目
-npx create-react-app dojo-blog

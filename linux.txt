@@ -1,3 +1,0 @@
-rm -file删除文件
-rmdir -filename删除文件夹
-chmod 777 ./setup.sh  设置权限

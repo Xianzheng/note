@@ -1,0 +1,32 @@
+#for python
+被引入文件，文件名import_pythonFile1
+def fun1():
+    print('a')
+
+引用文件
+import_pythonFile1 as a
+from import_pythonFile1 import fun1
+a.fun1()或fun1()
+
+#for js
+被引入文件，文件名import_jsFile1
+const a = () => {
+    console.log('I was imported')
+}
+module.exports = {a}
+引用文件
+var test = require('./import_jsFile1')
+
+test.a()
+或者
+被引入文件，文件名import_jsFile1
+const a = () => {
+    console.log('I was imported')
+}
+export default a
+引用文件,和引入文件在同一目录下
+import a from'./import_jsFile1.js'
+a()
+但是需要在同一目录下添加一个文件package.json
+在里面写入{"type":"module"}
+

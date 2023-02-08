@@ -1,0 +1,6 @@
+from django.contrib.auth.models import User
+user=User.objects.create_user("1","rock@51reboot.com","123456")
+user.set_password("1")
+user.save()
+
+pip install django-cors-headers
