@@ -1,0 +1,17 @@
+def BFS(root):
+    queue = []
+    queue.append(root)
+    while queue:
+        temp = queue.pop(0)
+        for i in temp.children:
+            queue.append(i)
+        print(temp.name)
+
+def DFS(root):
+    queue = []
+    queue.append(root)
+    while queue:
+        temp = queue.pop()
+        for i in temp.children:
+            queue.append(i)
+        print(temp.name)
