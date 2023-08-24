@@ -1,0 +1,41 @@
+用React Native编写移动端项目
+
+有个手机模拟器会很方便
+
+官方网推荐使用Android Studio Avd会很方便，
+
+因为React Native项目有个 默认参数 run-android
+
+但是Android Studio Avd 一套安装下来会非常大
+
+Android Studio Avd主要分为3大块非常巨大
+
+1.Android Studio（大约3.5G）
+
+2.Android SDK （大约 4.5G，随着使用变大）
+
+3. Android gridle(大约 4 - 5 G，随着使用变大)
+
+他们默认都在C盘，不迁移会撑爆C盘，但
+
+1.Android Studio 在安装时可定义安装在 D 盘
+
+2.Android SDK 可以在系统环境中创建用户环境变量
+
+（用户变量名）ANDROID_HOME 
+（用户变量值）D:\Android_SDK
+  ...在安装SDK时可选择安装在这个路径中
+
+3.Android gridle 可以在系统环境中创建用户环境变量
+（用户变量名）GRADLE_USER_HOME
+（用户变量值）D:\Android_Gradle\.gradle
+  ...后续的gradle会安装安装在这个路径中
+
+4. 在user下的.android文件之所以大是应为AVD在这里
+   但我们可以做迁移，avd安装位置不可选默认在
+   C:/Users/username/.android
+   可以修改C:\Users\nofeel\.android\avd 里的init文件
+   将AVD的path指向我们想迁移的位置
+
+
+这样可为C盘剩下大约14G的空间

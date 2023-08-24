@@ -1,0 +1,348 @@
+import urllib.request
+
+response = urllib.request.urlopen('http://www.baidu.com')
+
+print(response)
+
+rawHtml = response.read().decode('utf-8')
+
+print(rawHtml)
+
+# getHtmld的function
+--------------------------------------------------------------------
+def getHtml():
+    URL = 'https://www.douban.com/'
+    header = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36'
+    }
+    request = urllib.request.Request(url=URL,headers = header)
+
+    html = ''
+
+    try:
+        response = urllib.request.urlopen(request)
+        html = response.read().decode('utf-8')
+    
+    except urllib.error.URLError as e:
+        if hasattr(e,'code'):
+            print(e.code)
+        
+        if hasattr(e,'reason'):
+            print(e.reason)
+
+    return html
+
+---------------------------------------------------------------------------------
+    
+#安装beautiful soup 的库
+
+pip install beautifulsoup4
+
+#安装解析库
+
+pip install lxml
+
+pip install html5lib
+
+from bs4 import BeautifulSoup
+soup = BeautifulSoup(html,features='lxml')
+
+-----------------------------------------------------------------------------------
+
+#Beautiful Soup选择器用来查找定位元素，并获取数据
+
+
+# 1.节点选择器，2方法选择器，3 CSS选择器
+
+#节点就是html中的tag多个节点只会提取其中的一个
+
+#soup.tag比如soup.title, soup.a
+
+#提取具体信息可以根据tag 里的参数名来提取
+#用来提起节点名称
+soup.tag.name
+#用来提取节点属性
+soup.tag.attrs
+#用来提取内容
+soup.tag.strings
+
+-------------------------------------------------------------------------------------
+#关联选择器
+#子节点 contents,children
+#子孙节点 descendants
+#父节点 parent
+# 祖先节点 parents
+# 兄弟节点 next_sblings, previous_sblings,previous_sbling
+
+#soup.ul.contents能得到ul下的所有li值，返回的是一个列表
+liList = soup.ul.contents
+print(liList)
+
+#如果用的是children返回的就是一个生成器
+liIterator = soup.ul.children
+for i,c in enumerate(liIterator):
+    print(c)
+
+#next_sblings返回的同样是个生成器，next_sibling不好用
+print(list(enumerate(soup.li.next_siblings)))
+
+-----------------------------------------------------------------------------------------
+css选择器
+
+print(soup.select('#anony-nav'))#id 定位
+
+print(soup.select('.anony-nav-links')) # class 定位
+
+print(soup.select('a')) 标签选择器这样会获得所有的a
+
+print(soup.select('#anony-nav .anony-nav-links ul li'))#混合选择器
+
+#用select选择器得到的还是一个soup element
+
+#所以能用soup.tag.attrs
+
+---------------------------------------------------------------------------------
+
+#方法选择器
+#find_all(name,attrs,recursive,text,**kwargs)
+
+print(soup.find_all('a'))
+
+soup.find_all(re.compile('^b') #查找所有以b开头的标签
+
+soup.find_all(['a','span'])#查找所有a标签和span标签
+
+#attrs参数接受的字典
+soup.find_all(attrs={id:link1})
+
+#kwargs参数接受变量赋值
+soup.find_all(id='link1')
+
+#因为class是python的关键字所以更具class查询
+print(soup.find_all(class_ = 'story'))
+
+#text参数是通过标签中的内容来解锁的
+print(soup.find_all(text='Elise'))
+print(soup.find_all('a',text='Elise'))
+
+#limit参数，用于限制返回结果参数
+比如print(soup.find_all('a',limit=2))
+
+#recursive参数，作用决定是否获取子孙节点
+print(soup.find_all('title',recursive=False))
+------------------------------------------------------------------
+#综合自制爬网页图片爬虫
+
+from bs4 import BeautifulSoup
+from urllib.request import Request,urlopen
+import requests
+from fake_useragent import UserAgent
+
+startUrl = 'https://desk.zol.com.cn/fengjing/' 
+imgUrlList = []
+
+header = {
+    'User-Agent':UserAgent().random
+}
+
+req = Request(headers=header, url=startUrl)
+
+res = urlopen(req)
+
+soup = BeautifulSoup(res,features='lxml')
+
+for i in soup.select('img'):
+    tag = str(i)
+    for j in tag.split():
+        if 'src' in j or 'srch' in j:
+            imgUrl = j.split('=')[1]
+            imgUrlList.append(imgUrl.replace('"',''))
+
+# for i in imgUrlList:
+#     print(i)
+
+for i in range(len(imgUrlList)):
+    imgUrl = imgUrlList[i]
+    imageContent = requests.get(headers=header,url=imgUrl)
+    with open('./img/{}.{}'.format(str(i),'jpg'),'wb') as f:
+        f.write(imageContent.content)
+
+------------------------------------------------------------------
+#安装scrapy之前需要pip install wheel再
+pip install scrapy
+
+#在spiders文件夹下生成一个爬虫
+scrapy genspider whiskyspider "www.whiskyshop.com/single-malt-scotch-whisky/speyside"
+
+#运行一个指定的爬虫
+scrapy crawl whiskeyspider
+
+
+-----------------------------------------------------------------
+#whiskyshop spider
+from gc import callbacks
+import scrapy
+
+
+class WhiskeyspiderSpider(scrapy.Spider):
+    name = 'whiskeyspider'
+    allowed_domains = ['www.whiskyshop.com']
+    start_urls = ['https://www.whiskyshop.com/single-malt-scotch-whisky/speyside']
+
+    def parse(self, response):
+        for products in response.css('div.product-item-info'):
+            try:
+                yield { 
+                    'name':products.css('a.product-item-link::text').get(),
+                    'price':products.css('span.price::text').get().replace('£',''),
+                    'link':products.css('a.product-item-link').attrib['href'],
+                }
+
+            except:
+                yield { 
+                    'name':products.css('a.product-item-link::text').get(),
+                    'price':'sold out',
+                    'link':products.css('a.product-item-link').attrib['href'],
+                }
+        next_page = response.css('a.action.next').attrib['href']
+        if next_page is not None:
+            yield response.follow(next_page,callback=self.parse)
+
+------------------------------------------------------------------------------
+
+#抓取小说
+
+import scrapy
+from postscrape.items import PostscrapeItem
+
+class PostsSpider(scrapy.Spider):
+    name = 'posts'
+    allowed_domains = ['www.qidian.com']
+    start_urls = ['https://www.qidian.com/rank/yuepiao']
+
+    def parse(self, response):
+        title = response.xpath('//h2/a/text()').extract()
+        authors = response.xpath('//p[@class="author"]/a[1]/text()').extract()
+        for i,j in zip(title,authors):
+            yield{
+                "title":i,
+                'author':j,
+            }
+
+------------------------------------------------------------------------------
+
+#xpath 得到src text
+#//div[@id="media_container"]/picture/img/@src
+
+#//div[@class="channel-detail movie-item-title"]/@title
+------------------------------------------------------------------------------
+写入图片
+
+
+pip install fake_useragent
+
+imgContent = requests.get(headers=header,url="https://dg-fd.zol-img.com.cn/t_s208x130/g6/M00/0D/08/ChMkKmEbXdWIbWplAABOMEC5Pn0AAS28gK59LAAAE5I194.jpg")
+
+with open('./img/1.gif','wb') as f:
+    f.write(imgContent.content)
+---------------------------------------------------------------------------------
+
+#scrapy 爬图片
+
+#spider代码
+
+# -*- coding: utf-8 -*-
+import scrapy
+from ..items import PicPhotoPeopleItem
+
+
+class PeopleSpider(scrapy.Spider):
+    name = 'people'
+    # allowed_domains = ['699pic.com']
+    start_urls = ['https://www.vcg.com/creative-image/beijing/?sort=fresh']
+    base_url = 'http://699pic.com/'
+
+    def parse(self, response):
+        # 获取全部的图片地址
+        list_imgs = response.xpath('//figure[@class="galleryItem"]/a/img/@data-src').extract()
+        for i in range(len(list_imgs)):
+            list_imgs[i] = 'http:'+list_imgs[i]
+        if list_imgs:
+            item = PicPhotoPeopleItem()
+            item['image_urls'] = list_imgs  # 保存到item的image_urls里
+            yield item  # 返回item给pipeline文件处理
+
+#setting 代码
+
+import os
+# 配置数据保存路径，为当前工程目录下的 images 目录中
+project_dir = os.path.abspath(os.path.dirname(__file__))
+IMAGES_STORE = os.path.join(project_dir, 'images')
+# 过期天数
+IMAGES_EXPIRES = 90  # 90天内抓取的都不会被重抓
+
+
+# Crawl responsibly by identifying yourself (and your website) on the user-agent
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'
+
+# Obey robots.txt rules
+ROBOTSTXT_OBEY = False
+BOT_NAME = 'pic_photo_people'
+
+SPIDER_MODULES = ['pic_photo_people.spiders']
+NEWSPIDER_MODULE = 'pic_photo_people.spiders'
+
+ITEM_PIPELINES = {
+   'scrapy.pipelines.images.ImagesPipeline': 1,
+}
+
+#items代码
+
+
+import scrapy
+
+
+class PicPhotoPeopleItem(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    # 存放url的下载地址
+    image_urls = scrapy.Field()
+    # 图片下载路径、url和校验码等信息（图片全部下载完成后将信息保存在images中）
+    images = scrapy.Field()
+    # 图片的本地保存地址
+    image_paths = scrapy.Field()
+
+-----------------------------------------------------------------------------------
+
+scrapy 爬取整部小说
+
+import scrapy
+
+
+class XiaoshuospiderSpider(scrapy.Spider):
+    name = 'xiaoshuoSpider'
+    allowed_domains = ['book.zongheng.com']
+    start_urls = ['http://book.zongheng.com/chapter/1177003/67446347.html']
+
+    def parse(self, response):
+        title = response.xpath('//div[@class="title_txtbox"]/text()').extract_first()
+        content = ''.join(response.xpath('//div[@class="content"]/p/text()').extract())
+        content = content.replace('  ','\n')
+        yield{
+            'title':title,
+            'content':content,
+        }
+
+        next_url = response.xpath('//div[@class = "chap_btnbox"]/a[3]/@href').extract_first()
+
+        yield scrapy.Request(next_url,callback=self.parse)
+
+
+
+
+
+
+
+
+
+

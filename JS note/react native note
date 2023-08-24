@@ -1,0 +1,28 @@
+20220801
+将一个function做成html component 需要 return 一些html内容
+当调用这个components时，需将这个function名大写
+
+function Fiche() {
+  return (
+    <Card>
+        
+        <Card.Content>
+          <Title>Card title</Title>
+          <Paragraph>Card content</Paragraph>
+        </Card.Content>
+        <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+        <Card.Actions>
+          <Button>Cancel</Button>
+          <Button>Ok</Button>
+        </Card.Actions>
+      </Card>
+  )
+  
+}
+const hunanCuisine = () => (
+  <View>
+    <Fiche/>
+    <Fiche/>
+    <Fiche/>
+    </View>  
+);

@@ -1,0 +1,13 @@
+https://aws.amazon.com/cn/blogs/developer/creating-net-core-aws-lambda-projects-without-visual-studio/
+
+dotnet new -i Amazon.Lambda.Templates::*
+
+dotnet new lambda.EmptyFunction --name Myproject --region us-east-1 
+
+cd D:\vsWorkSpace\file\freelancerWP\serverless\upload\Myproject\src\Myproject
+
+dotnet restore
+
+dotnet build
+
+dotnet publish

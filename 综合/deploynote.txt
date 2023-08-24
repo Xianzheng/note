@@ -1,0 +1,57 @@
+#venv jupyter notebook needs：
+pip uninstall pyzmq
+pip install pyzmq==19.0.2 
+
+#use pem file: 
+WinSCP:   登录->高级->SSH->验证会自动把pem文件转换为ppk
+Putty: SSH ->Auth-> Browse 选择ppk文件
+（先用winscp转ppk文件，再用putty用户名用root登录）
+
+#EC2 Python 环境setUp：
+sudo apt-get-update
+sudo apt-get install python3-pip
+sudo apt-get install python3-venv
+python3 -m venv pyenv
+source pyenv/bin/activate
+pip3 install jupyter
+jupyter notebook --generate-config
+jupyter notebook password
+source pyenv/bin/activate
+jupyter notebook --ip 0.0.0.0 --port 8080 --no-browser --allow-root
+nohup jupyter notebook --allow-root > jupyter.log 2>&1 &
+
+
+EC2上线网站或jupyter一定要修改inbound rule（进站规则,指定端口！！！！！）
+
+pip freeze > requirements.txt
+
+#github deploy react
+
+npx create-react-app react-deploy --template typescript
+npm install gh-pages --save-dev
+
+'''
+change package.json:
+
+  "homepage":"http://Xianzheng.github.io/react-deploy",
+  "name": "react-deploy",
+  "version": "0.1.0",
+  "private": true,
+
+  "scripts": {
+    "predeploy":"npm run build",
+    "deploy":"gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+'''
+git init
+git remote add origin https://github.com/Xianzheng/react-deploy.git
+git status
+git add .
+git commit -m "first deploy react app"
+npm run deploy
+git push -u origin master
+

@@ -1,0 +1,14 @@
+传输json数据到tempalte js 里需要
+在view里
+def home(request):
+    List = ['列表1', '列表2']
+    Dict = {'键1': '值1', '键2': '值2'}
+    return render(request, 'home.html', {
+            'List': json.dumps(List),
+            'Dict': json.dumps(Dict)
+        })
+在template需要
+<script type="text/javascript">
+    var List = {{ List|safe }};//列表
+    var Dict = {{ Dict|safe }};//字典
+</script>

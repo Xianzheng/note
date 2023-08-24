@@ -1,0 +1,114 @@
+一个页面调到下一个页面
+window.location.href =
+    "list.html?name=" + response.name + "&email=" + response.email;
+
+###############################################
+
+windows.localStorage.setItem("key","value")
+
+let value = localStorage["key"]
+
+###############################################
+
+如果用append动态添加html元素
+
+点击标签产生反应最好在添加元素页的html写function
+
+################################################
+
+动态添加元素，可以直接添加onclick，绑定反应函数，可以传递参数
+
+var imgA = document.createElement("a");
+  imgA.setAttribute("onclick", "deleteJob(" + job.id + ")");
+  imgA.appendChild(img);
+  ele.appendChild(imgA);
+
+  var h3tag = document.createElement("h3");
+  h3tag.innerText = job.title;
+  ele.appendChild(h3tag);
+
+################################################
+
+解析网页参数，得到参数名位name
+let a = getQueryVariable("name");
+
+console.log(a);
+
+
+function getQueryVariable(variable) {
+  let query = window.location.search.substring(1);
+  let vars = query.split("&");
+  for (let i = 0; i < vars.length; i++) {
+    let pair = vars[i].split("=");
+    if (pair[0] == variable) {
+      return pair[1];
+    }
+  }
+  return false;
+}
+
+###########################################
+fetch POST的用法
+
+unction requestLoin(email, password) {
+  const params = {
+    email: email,
+    password: password,
+  };
+
+  const options = {
+    method: "POST",
+    body: JSON.stringify(params),
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  };
+
+  fetch("http://localhost:5005/auth/login", options)
+    .then((response) => response.json())
+    .then((response) => {
+      if (response.userId) {
+        // stu = new Student(response.userId, response.token);
+        stu.id = response.userId;
+        stu.token = response.token;
+        getUser(stu);
+      } else {
+        alert("not valid");
+      }
+    });
+}
+
+#########################################################
+
+fetch post
+
+function getUser(stu) {
+  var res;
+  const params = {
+    Authorization: stu.token,
+    userId: stu.id,
+  };
+
+  const options = {
+    method: "GET",
+
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: stu.token,
+      cache: "no-cache",
+    },
+  };
+
+  fetch("http://localhost:5005/user?userId=" + parseInt(stu.id), options)
+    .then((response) => response.json())
+    .then((response) => {
+      jumpToList(response);
+    });
+}
+##########################################################
+
+每个页面绑定不同的js文件
+
+

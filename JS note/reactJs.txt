@@ -1,0 +1,182 @@
+App.js写入
+
+import Header from "./components/Header";
+import { useState } from "react";
+import NewForm from "./components/Form";
+import React from "react";
+import { v1 as uuid } from "uuid";
+import YoutubeEmbed from "./components/YoutubeEmbed";
+
+export default function App() {
+  const [songs, setSongs] = useState([
+    { title: "almost home", id: 1 },
+    { title: "almost there", id: 2 },
+    { title: "almost that", id: 3 },
+  ]);
+
+  const addSong = (title) => {
+    setSongs([...songs, { title, id: uuid() }]);
+  };
+
+  return (
+    <div className="App">
+      <h1>Youtube Embed</h1>
+      <YoutubeEmbed embedId="NdwFmtLgDVU" />
+      {songs.map((song) => {
+        return <li key={song.id}>{song.title}</li>;
+      })}
+      <NewForm addSong={addSong} />
+    </div>
+  );
+}
+------------------------------------------------------------------
+Form.js里写入
+import { useState } from "react";
+const NewForm = ({ addSong }) => {
+  const [url, setURL] = useState("");
+
+  const handle = (e) => {
+    e.preventDefault();
+    addSong(url);
+  };
+  return (
+    <form onSubmit={handle}>
+      <label>add youtube url</label>
+      <input
+        type="text"
+        value={url}
+        required
+        onChange={(e) => {
+          setURL(e.target.value);
+        }}
+      ></input>
+      <input type="submit" value="add URL" />
+    </form>
+  );
+};
+
+export default NewForm;
+--------------------------------------------------------------
+YoutubeEmbed.js写入
+import React from "react";
+import PropTypes from "prop-types";
+
+const YoutubeEmbed = ({ embedId }) => (
+  <div className="video-responsive">
+    <iframe
+      width="853"
+      height="480"
+      src={`https://www.youtube.com/embed/${embedId}`}
+      frameBorder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      title="Embedded youtube"
+    />
+  </div>
+);
+
+YoutubeEmbed.propTypes = {
+  embedId: PropTypes.string.isRequired,
+};
+
+export default YoutubeEmbed;
+
+-------------------------------------------------------------------------------
+注意在App.js里调用<NewSongForm addSong = {addSong}> 这里的 {addSong}其实是在App.js里写好的
+一个函数，将整个函数当参数传给了 componenets NewSongForm，这样就实现了两个useState互联，妙
+
+在input中应该写入
+<input type="text" value={url} required onChange={(e) => { setURL(e.target.value) }}/>
+不然可能会导致useState没有进行重新渲染
+
+react 运行 -> npm start
+
+npm install axios  -> axios发送后端请求请求
+
+----------------------------------------------------------------------------------
+axios请求后盾数据
+
+useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/task-list/")
+      .then((res) => {
+        setSongs(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+这里注意，如果没有[]当第二个参数useEffect将会无限循环
+------------------------------------------------------------------------------------
+这里用用axios向后端发送数据，并用后端返回的返回的数据更新现有useState
+
+const handle = (e) => {
+    e.preventDefault();
+    const address = "http://127.0.0.1:8000/api/task-create/";
+    const data = { title: url, completed: false };
+    axios
+      .post(address, data)
+      .then((res) => {
+        addSong(res.data);
+      })
+      .catch((err) => err);
+  };
+
+      
+在这里更新useState需要用发送返回来的Object来更新Object
+所以 添加函数长这样子
+
+const addSong = (data) => {
+    console.log(data);
+    setSongs([
+      ...songs,
+      { id: data.id, title: data.title, completed: data.completed },
+    ]);
+  };
+-----------------------------------------------------------------------------
+
+在对useState用map渲染多个标签要用div不然会报错
+react 在标签中直接写css 携程这样 <li style = {{display: "inline-block"}}>
+在函数中直接传递参数不用大括号
+完整 代码
+
+return (
+    <div className="App">
+      <h1>Youtube Embed</h1>
+      <YoutubeEmbed embedId="NdwFmtLgDVU" />
+      <div>
+        {songs.map((song) => {
+          return (
+          <div key={song.id} >
+          <li style = {{display: "inline-block"}}>{song.title} </li>
+          <button onClick={()=>Delete(song.id)}>Delete</button>
+          </div>
+          );
+        })}
+      </div>
+      <NewForm addSong={addSong} />
+    </div>
+  );
+
+对数据做删除操作，切记address一定要写对不然会有multi redirect错误
+在数据库中删除数据同时也要对useState做更新操作这样页面才会重新渲染
+更新操作长这样setSongs(songs.filter(res => res.id !== id))
+
+完整代码：
+  const Delete = (id) =>{
+    const address = "http://127.0.0.1:8000/api/task-delete/"+id+"/"
+    axios
+      .delete(address)
+      .then((res)=>{
+        setSongs(songs.filter(res => res.id !== id));
+      })
+      .catch((err)=>{
+        console.log(err)
+      });
+  }
+
+
+
+
+------------------------------------------------------------------------------------------

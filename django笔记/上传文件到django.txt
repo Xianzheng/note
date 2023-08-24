@@ -1,0 +1,15 @@
+def uploadFile_view(request):
+    
+    if request.method == 'POST':
+        obj = request.FILES.get('fafafa', '1')
+        # print(obj.name)
+        f = open(os.path.join(BASE_DIR, 'media', obj.name), 'wb')
+        for chunk in obj.chunks():
+            f.write(chunk)
+        f.close()
+        # return render(request, 'clashphone/test.html')
+        message = '已成功将该文件上传至系统,可通过处理文件将其转换至CSV'
+        return render(request,'message.html',{'message':message})
+    else:
+        form = uploadContentForm()
+    return render(request,'uploadFile.html',{'form':form});

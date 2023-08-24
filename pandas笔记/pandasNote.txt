@@ -1,0 +1,34 @@
+------------------map---------------------
+train['Sex_num'] = train.Sex.map({'female':0,'male':1})
+
+------------------apply--------------------
+train.loc[0:4,['Sex','Sex_num']]
+
+train['Name_length'] = train.Name.apply(len)
+
+train.loc[0:4,['Name','Name_length']]
+
+import numpy as np
+
+trains['Fare_ceil'] = train.Fare.apply(np.ceil)
+
+def get_element(my_list,position):
+	return my_list[position]
+train.Name.str.split(',').apply(get_element,position=0)
+
+train.Name.str.split(',').apply(lambda x: x[0])
+
+drinks = py.read_csv('http://bit.ly.drinksbycountry')
+
+drinks.loc[:,'beer_servings':'wine_servings'].apply(max,axis=0)
+
+drinks.loc[:,'beer_servings':'wine_servings'].apply(np.argmax,axis=1)
+
+------------------applymap-------------------
+drinks.loc[:,'beer_servings','wine_servings'].applymap(float)
+
+movies.sort_values('duration',ascending='false')
+----------------------------------------------
+df['coloumns_name']这个为series
+df.iloc[1:2,1:2]即使这个一行一列都为data frame
+----------------------------------------------
