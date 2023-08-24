@@ -1,0 +1,15 @@
+当Github中已有仓库，想要添加内容进这个仓库
+
+可以先去这个仓库中找到这个仓库地址，再进行克隆
+
+git clone https://github.com/Xianzheng/note.git
+
+克隆后会自带这个仓库地址,下次在这个文件夹中
+就可以直接添加内容上传
+
+git add .
+
+git commit -m "readytopush"
+
+git push
+
