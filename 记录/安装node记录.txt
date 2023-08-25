@@ -1,0 +1,5 @@
+window 7最高支持node 13.14
+
+下载msi文件，安装在D盘，PATH什么的就不用再配了
+
+global cache什么的都在D 盘

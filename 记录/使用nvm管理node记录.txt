@@ -1,0 +1,30 @@
+在windows下一次只能用一个版本的node，
+
+所以下载nvm管理node 版本是一个不错的选择
+
+nvm下载官网: 
+https://github.com/coreybutler/nvm-windows/releases
+
+里面有个nvm-setup.zip.里面会有个exe文件指导安装
+
+nvm和nodejs安装目录都安装在D盘,
+后面的path都会自动配在D 盘
+
+下载node版本代码，比如:
+nvm install 13.14.0
+nvm install 18.17.1
+
+查看所有node选项
+nvm list
+
+!!!!必须要使用代码 ，后面才正常使用node，比如
+nmv use 18.17.1
+
+node -v
+
+
+
+
+
+
+
