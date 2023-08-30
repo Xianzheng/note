@@ -1,0 +1,19 @@
+model.objects.all()或者 model.objects.filter(id=?)
+返回的是一个querySet
+
+QuerySet不支持sort方法，或者sorted类
+
+最好把querySet变成普通的list再用常规的排序方法
+
+比如这次年月都是字符串想把字符串当成数字排序
+
+字符串排序是1，10，2，3，4
+
+数字排序是1，2，3，4，5,..,10
+
+lst = list(model.objects.all())
+
+lst.sort(key=func)
+
+def func(x):
+	pass

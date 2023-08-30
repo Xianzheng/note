@@ -1,0 +1,13 @@
+安装尽量用yarn 安装环境库
+
+初始化expo环境，expo是全球变量，选择的template用 typescript
+好使用UI库的Components
+expo init try2
+
+安装 react native elements UI 库
+yarn add @rneui/themed @rneui/base
+
+不安装 react-native-safe-area-context  用不了 UI 库 Component
+yarn add react-native-safe-area-context  
+
+
