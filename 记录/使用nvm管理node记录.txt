@@ -20,7 +20,7 @@ nvm list
 !!!!必须要使用代码 ，后面才正常使用node，比如
 nmv use 18.17.1
 
-node -v
+node --version
 
 
 

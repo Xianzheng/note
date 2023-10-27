@@ -1,0 +1,5 @@
+nodejs最后支持的版本是 
+
+Node.js 13.14.0 对应的npm是 npm6.14.14 module79
+
+https://nodejs.org/zh-cn/download/releases
