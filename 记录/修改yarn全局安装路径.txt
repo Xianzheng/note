@@ -1,0 +1,10 @@
+#改变 yarn 全局安装位置
+yarn config  set global-folder "你的磁盘路径"
+
+#然后你会在你的用户目录找到 .yarnrc 的文件，打开它，找到 global-folder ，改为 --global-folder
+yarn config  set global-folder "D:\Software\yarn\global"
+
+#改变 yarn 缓存位置
+yarn config set cache-folder "D:\Software\yarn\cache"
+
+
